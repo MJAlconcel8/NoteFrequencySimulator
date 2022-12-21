@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pprint
+from scipy.io.wavfile import write
 
 waveFrequency = 44100
 
@@ -20,6 +21,12 @@ def pianoNotesFrequency():
     return dictionaryOfNoteFrequency
 
 
+def dataOfSong(songNotes):
+    noteFrequency = pianoNotesFrequency()
+    songNoteFrequency = [createWave(noteFrequency[i]) for i in songNotes.split('-')]
+    songNoteFrequency = np.concatenate(songNoteFrequency)
+    return songNoteFrequency
+
 if __name__== '__main__':
     drawWave = createWave(440,1)
     print(drawWave, len(drawWave), np.max(drawWave), np.min(drawWave))
@@ -28,3 +35,8 @@ if __name__== '__main__':
     plt.ylabel("Frequency Disturbance")
     plt.show()
     pprint.pprint(pianoNotesFrequency())
+    musicNotes = 'C-C-G-G-A-A-G--F-F-E-E-D-D-C--G-G-F-F-E-E-D--G-G-F-F-E-E-D--C-C-G-G-A-A-G--F-F-E-E-D-D-C'
+    songData = dataOfSong(musicNotes)
+    songData *= (16300/np.max(songData))
+    write("song.wav", waveFrequency, songData.astype(np.int16))
+    print("Song Written Successful")
