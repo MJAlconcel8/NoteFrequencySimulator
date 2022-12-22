@@ -21,11 +21,23 @@ def pianoNotesFrequency():
     return dictionaryOfNoteFrequency
 
 
+def chordFrequency(chords):
+    chords = chords.split('-')
+    noteFrequency = pianoNotesFrequency()
+    listOfChords = []
+    for i in chords:
+        chordData = sum([createWave(noteFrequency[j]) for j in list(i)])
+        listOfChords.append(chordData)
+    listOfChords = np.concatenate(listOfChords, axis=0)
+    return listOfChords
+
+
 def dataOfSong(songNotes):
     noteFrequency = pianoNotesFrequency()
     songNoteFrequency = [createWave(noteFrequency[i]) for i in songNotes.split('-')]
     songNoteFrequency = np.concatenate(songNoteFrequency)
     return songNoteFrequency
+
 
 if __name__== '__main__':
     drawWave = createWave(440,1)
@@ -40,3 +52,9 @@ if __name__== '__main__':
     songData *= (16300/np.max(songData))
     write("song.wav", waveFrequency, songData.astype(np.int16))
     print("Song Written Successful")
+    musicChords = 'EgB-DfA-AcE-BDf-gAcE-fAc'
+    songData = chordFrequency(musicChords)
+    songData *= 16300/np.max(songData)
+    songData = np.resize(songData, (len(songData)*5,))
+    write('chords.wav', waveFrequency, songData.astype(np.int16))
+    print("Chords Wirtten Successfully")
